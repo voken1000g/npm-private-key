@@ -1,18 +1,19 @@
 const base32 = require('@voken/base32')
 
+
 const fromVPriv = function (input) {
   if (!input instanceof String) {
     throw TypeError('Except: String')
   }
 
   if ('vpriv' !== input.slice(0, 5)) {
-    throw new InvalidStartError('A VOKEN Private Key must start with `vpriv`')
+    throw new InvalidStartError('A VOKEN Private Key should start with `vpriv`')
   }
 
   input = input.slice(5)
 
   if (input.length !== 52) {
-    throw new InvalidLengthError('The length of a VOKEN Private Key must be `57`')
+    throw new InvalidLengthError('The length of a VOKEN Private Key should be `57`')
   }
 
   let bufPrivateKey = Buffer.from(base32.decode(input))
@@ -22,6 +23,14 @@ const fromVPriv = function (input) {
   }
 
   return bufPrivateKey
+}
+
+const toVPriv = function (input) {
+  if (input.length !== 32) {
+    throw new InvalidLengthError('The length of a Private Key should be `32`')
+  }
+
+  return 'vpriv' + base32.encode(input)
 }
 
 class InvalidStartError extends Error {
@@ -42,6 +51,7 @@ class InvalidLengthError extends Error {
 
 module.exports = {
   fromVPriv: fromVPriv,
+  toVPriv: toVPriv,
   InvalidStartError: InvalidStartError,
   InvalidLengthError: InvalidLengthError,
 }
